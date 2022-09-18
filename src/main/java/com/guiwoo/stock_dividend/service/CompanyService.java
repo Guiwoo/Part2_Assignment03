@@ -12,6 +12,7 @@ import com.guiwoo.stock_dividend.persist.repository.CompanyRepository;
 import com.guiwoo.stock_dividend.persist.repository.DividendRepository;
 import com.guiwoo.stock_dividend.scapper.Scraper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.Trie;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class CompanyService {
 
     private final Scraper yahooFinanceScraper;
@@ -56,7 +58,7 @@ public class CompanyService {
                 .collect(Collectors.toList());
 
         this.dividendRepository.saveAll(dividendEntities);
-
+        log.info("Scrap Done => Save total : "+dividendEntities.size());
         return company;
     }
     public Page<CompanyEntity> allCompany(Pageable pageable){
@@ -64,6 +66,7 @@ public class CompanyService {
     }
     public void addAutoCompleteKeyword(String keyword){
         trie.put(keyword,null);
+        log.info("Added AutoComplete Keyword => "+keyword);
     }
     public List<String> autoComplete(String prefix){
         return (List<String>) trie.prefixMap(prefix).keySet()
@@ -71,6 +74,7 @@ public class CompanyService {
     }
     public void deleteComplete(String keyword){
         trie.remove(keyword);
+        log.info("Delete Keyword in Trie => "+keyword);
     }
 
     public List<String> companyNamesByKeyword(String keyword){
@@ -85,10 +89,13 @@ public class CompanyService {
         CompanyEntity companyEntity = companyRepository.findByTicker(ticker)
                 .orElseThrow(NoCompanyException::new);
         dividendRepository.deleteAllByCompanyId(companyEntity.getId());
+        log.info("Success Delete Dividend By Company");
         companyRepository.delete(companyEntity);
+        log.info("Success Delete Company");
         return companyEntity.getName();
     }
     public void clearFinanceCache(String companyName){
         redisCacheManager.getCache(CacheKey.KEY_FINANCE).evict(companyName);
+        log.info("Cache Data Cleared");
     }
 }

@@ -41,6 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String resolveToken(HttpServletRequest req){
         String token = req.getHeader(TOKEN_HEADER);
         if(!ObjectUtils.isEmpty(token) && token.startsWith(PREFIX)){
+            log.warn("There's no Token on header");
             return token.substring(PREFIX.length());
         }
         return null;

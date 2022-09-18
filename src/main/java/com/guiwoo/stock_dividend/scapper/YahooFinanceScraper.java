@@ -4,6 +4,7 @@ import com.guiwoo.stock_dividend.model.Company;
 import com.guiwoo.stock_dividend.model.Dividend;
 import com.guiwoo.stock_dividend.model.ScrapResult;
 import com.guiwoo.stock_dividend.model.constant.Month;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 public class YahooFinanceScraper implements Scraper{
     private static final String URL = "https://finance.yahoo.com/quote/%s/history?period1=%d&period2=%d&interval=1mo";
     private static final String URL_TICKER ="https://finance.yahoo.com/quote/%s?p=%s";
@@ -57,7 +59,7 @@ public class YahooFinanceScraper implements Scraper{
 
         }catch (IOException e){
             // ToDo
-            e.printStackTrace();
+            log.error("Scrap Error occurred : "+ e.getMessage());
         }
 
         return result;

@@ -23,6 +23,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody Auth.SignUp req){
         MemberEntity memberEntity = memberService.memberRegister(req);
+        log.info("Member Registered");
         return ResponseEntity.ok(memberEntity);
     }
     @PostMapping("/signin")
