@@ -46,7 +46,6 @@ public class CompanyController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasRole('WRITE')")
     public ResponseEntity<?> createCompany(@RequestBody Company req){
         String ticker = req.getTicker().trim();
         if(ObjectUtils.isEmpty(ticker)){
